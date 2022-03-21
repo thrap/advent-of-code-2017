@@ -1,23 +1,24 @@
 import run from "aocrunner"
 
-const re = /(.*)/
-const parseLine = l => l.match(re).slice(1).map(x => +x ? +x : x)
 const parseInput = rawInput => rawInput.split('\n')
+
+const evaluate = (line, reg) => {
+  const [a, b] = line.split(' if ')
+
+  const r = a => `reg["${a}"]`
+  const condition = b.replace(/^([^ ]+)/, a => `(${r(a)}||0)`)
+  const expr = a.replace(/^([^ ]+)/, a => `${r(a)}=(${r(a)}||0)`).replace('dec', '-').replace('inc', '+')
+
+  if (eval(condition)) {
+    eval(expr)
+  }
+}
 
 const part1 = (rawInput) => {
   const input = parseInput(rawInput)
 
   var reg = {}
-  input.forEach(l => {
-    const [a, b] = l.split(' if ')
-
-    const str = b.replace(/^([^ ]+)/, (a) => '(reg["'+a+'"]||0)')
-    const str2 = a.replace(/^([^ ]+)/, (a) => 'reg["'+a+'"] = (reg["'+a+'"]||0)' ).replace('dec', '-').replace('inc', '+')
-
-    if (eval(str)) {
-      eval(str2)
-    }
-  })
+  input.forEach(l => evaluate(l, reg))
 
   return Math.max(...Object.values(reg))
 }
@@ -25,26 +26,20 @@ const part1 = (rawInput) => {
 const part2 = (rawInput) => {
   const input = parseInput(rawInput)
 
-  return
+  var max = 0
+  var reg = {}
+  input.forEach(l => {
+    evaluate(l, reg)
+    max = Math.max(max, Math.max(...Object.values(reg)))
+  })
+  return max
 }
 
-const part1Input = `b inc 5 if a > 1
-a inc 1 if b < 5
-c dec -10 if a >= 1
-c inc -20 if c == 10`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
