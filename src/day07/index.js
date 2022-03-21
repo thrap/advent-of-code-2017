@@ -1,11 +1,8 @@
 import run from "aocrunner"
 
-const re = /(.*)/
-const parseLine = l => l.match(re).slice(1).map(x => +x ? +x : x)
-const parseInput = rawInput => rawInput.split('\n')//.map(parseLine)
+const parseInput = rawInput => rawInput.split('\n')
 
-const part1 = (rawInput) => {
-  const input = parseInput(rawInput)
+const root = input => {
   const parents = []
   const children = new Set()
   input.filter(x => x.includes('->')).map(x => x.split(/ \(.* -> /)).forEach(x => {
@@ -16,39 +13,52 @@ const part1 = (rawInput) => {
 
   return parents.filter(x => !children.has(x))[0]
 }
+const part1 = (rawInput) => root(parseInput(rawInput))
 
 const part2 = (rawInput) => {
   const input = parseInput(rawInput)
 
-  return
+  const weight = {}
+  const children = {}
+
+  input.forEach(x => {
+    const [a, b] = x.split(' -> ')
+    const [node, cost] = a.split(' ')
+    weight[node] = eval(cost)
+    if (b) {
+      children[node] = b.split(', ')
+    }
+  })
+
+  const dfs = (node) => {
+    var sum = weight[node]
+    if (!children[node])
+      return sum
+    const weights = children[node].map(x => dfs(x))
+    const min = Math.min(...weights)
+    const max = Math.max(...weights)
+    if (min != max) {
+      const count = [0, 0]
+      for (var i = 0; i < weights.length; i++) {
+        count[weights[i] == min ? 0 : 1]++
+      }
+      const index = weights.indexOf(count[0] == 1 ? min : max)
+      throw weight[children[node][index]] + (max-min) * (count[0] == 1 ? 1 : -1)
+    }
+    return sum + weights.reduce((acc, x) => acc + x)
+  }
+  try {
+    dfs(root(input))
+  } catch (e) {
+    return e
+  }
 }
 
-const part1Input = `pbga (66)
-xhth (57)
-ebii (61)
-havc (66)
-ktlj (57)
-fwft (72) -> ktlj, cntj, xhth
-qoyq (66)
-padx (45) -> pbga, havc, qoyq
-tknk (41) -> ugml, padx, fwft
-jptl (61)
-ugml (68) -> gyxo, ebii, jptl
-gyxo (61)
-cntj (57)`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
