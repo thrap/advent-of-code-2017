@@ -1,45 +1,31 @@
 import run from "aocrunner"
 
-const parseInput = rawInput => rawInput.split('\t').map(x => +x)
+const parse = input => input.split('\t').map(x => +x)
 
-const part1 = (rawInput) => {
-  const input = parseInput(rawInput)
-
+const cycles = arr => {
   const seen = {}
   for (var cycles = 0; true; cycles++) {
-    if (seen[input]) {
-      return cycles
-    }
-    seen[input] = true
-    var max = Math.max(...input)
-    var i = input.indexOf(max)
-    input[i] = 0
+    if (seen[arr]) return cycles
+
+    seen[arr] = true
+    var max = Math.max(...arr)
+    var i = arr.indexOf(max)
+    arr[i] = 0
     for (var di = 1; di <= max; di++) {
-      input[(i+di)%input.length]++
+      arr[(i+di)%arr.length]++
     }
   }
 }
 
-const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
-
-  return
-}
-
-const part1Input = `0\t2\t7\t0`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: 5 },
-    ],
-    solution: part1,
+    solution: (input) => cycles(parse(input)),
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
-    solution: part2,
+    solution: (input) => {
+      const arr = parse(input)
+      cycles(arr)
+      return cycles(arr)
+    },
   },
-  onlyTests: false,
 })
