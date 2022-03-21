@@ -1,27 +1,28 @@
 import run from "aocrunner"
 
-const re = /(.*)/
-const parseLine = l => l.match(re).slice(1).map(x => +x ? +x : x)
 const cancel = input => input.replace(/\!./g, '')
 
-const part1 = (rawInput) => {
-  const input = cancel(rawInput).replace(/<[^>]*>/g, '').replace(/,/g, '')
+const part1 = (input) => {
+  const groups = cancel(input).replace(/<[^>]*>/g, '').replace(/,/g, '')
   var sum = 0
   var depth = 0
-  for(var i = 0; i < input.length; i++) {
-    if (input[i] == '{') {
+  for(var i = 0; i < groups.length; i++) {
+    if (groups[i] == '{') {
       depth++
       sum += depth
     } else {
       depth--
     }
   }
-
   return sum
 }
 
-const part2 = (rawInput) => {
-  return
+const part2 = (input) => {
+  var sum = 0
+  cancel(input).replace(/<[^>]*>/g, b => {
+    sum += b.length - 2
+  })
+  return sum
 }
 
 run({
@@ -29,10 +30,6 @@ run({
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: '', expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
