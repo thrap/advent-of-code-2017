@@ -1,70 +1,62 @@
 import run from "aocrunner"
 
-const parseInput = rawInput => rawInput.split('\n').map(l => l.split(' '))
+const parse = rawInput => rawInput.split('\n').map(l => l.split(' '))
 
-const part1 = (rawInput) => {
-  const input = parseInput(rawInput)
-
-  const reg = {}
-
-  var out = 0
+const Program = function(reg, program) {
+  var out = []
   var i = 0
+  var rc = []
+  this.sent = 0
+
   const inst = {
     set: (x, y) => reg[x] = y,
     add: (x, y) => reg[x] = (reg[x] || 0) + y,
     mul: (x, y) => reg[x] = (reg[x] || 0) * y,
     mod: (x, y) => reg[x] = (reg[x] || 0) % y,
-    snd: (x) => out = reg[x] || 0,
-    rcv: (x) => {
-      if (reg[x] != 0) {
-        i = input.length
+    snd: (x) => ++this.sent & out.push(reg[x] || 0),
+    rcv: (x) => reg[x] = rc.shift(),
+    jgz: (x, y) => i += (+x || reg[x] > 0) ? (y - 1) : 0
+  }
+
+  this.recieve = (arr) => rc.push(...arr)
+  this.output = () => out.splice(0, out.length)
+  this.run = () => {
+    var ran = false
+    for (; i < program.length; i++) {
+      const [s, x, y] = program[i]
+      if (s == 'rcv' && rc.length == 0) {
+        return ran
       }
-    },
-    jgz: (x, y) => {
-      if ((/\d/.test(x) ? +x : reg[x]) > 0) {
-        i += y - 1
-      }
+      ran = true
+      inst[s](x, /\d/.test(y) ? +y : reg[y] || 0)
     }
   }
+}
 
-  for (i = 0; i < input.length; i++) {
-    const [s, x, y] = input[i]
+const part1 = (input) => {
+  var p = new Program({}, parse(input))
+  p.run()
+  return p.output().pop()
+}
 
-    inst[s](x, /\d/.test(y) ? +y : reg[y] || 0)
+const part2 = (input) => {
+  const program = parse(input)
+
+  var p0 = new Program({ p: 0 }, program)
+  var p1 = new Program({ p: 1 }, program)
+
+  for (var i = 0; p0.run() || p1.run(); i++) {
+    p0.recieve(p1.output())
+    p1.recieve(p0.output())
   }
-
-  return out
+  return p1.sent
 }
 
-const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
-
-  return
-}
-
-const part1Input = `set a 1
-add a 2
-mul a a
-mod a 5
-snd a
-set a 0
-rcv a
-jgz a -1
-set a 1
-jgz a -2`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
