@@ -34,27 +34,24 @@ const part1 = (rawInput) => {
 
 const part2 = (rawInput) => {
   const input = parseInput(rawInput)
+  const constraints = []
+  input.forEach(([x, range]) => {
+    var a = (range-1)*2
+    var b = (a-x%a)%a
+    constraints.push((n) => n % a != b)
+  })
 
-  return
+  for (var i = 0; true; i++) {
+    if (constraints.every(f => f(i)))
+      return i
+  }
 }
 
-const part1Input = `0: 3
-1: 2
-4: 4
-6: 4`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
