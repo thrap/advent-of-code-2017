@@ -1,44 +1,20 @@
 import run from "aocrunner"
 
-const parseInput = rawInput => rawInput.split('\n').map(l => l.split(': ').map(x => +x))
+const parse = input => input.split('\n').map(l => l.split(': '))
 
-const part1 = (rawInput) => {
-  const input = parseInput(rawInput)
-  const pos = {}
-  const range = {}
-  const dir = {}
-  input.forEach(([i, r]) => {
-    pos[i] = 0
-    range[i] = r
-    dir[i] = 1
-  })
-  const max = Math.max(...Object.keys(pos))
-
-  var severity = 0
-  for (var i = 0; i <= max; i++) {
-    if (pos[i] == 0) {
-      severity += i * range[i]
-    }
-    Object.keys(pos).forEach(x => {
-      pos[x] = pos[x] + dir[x]
-      if (pos[x] == range[x] - 1) {
-        dir[x] = -1
-      } else if (pos[x] == 0) {
-        dir[x] = 1
-      }
-    })
-  }
-
-  return severity
-}
-
-const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
-  const constraints = []
-  input.forEach(([x, range]) => {
+const part1 = (input) => {
+  return parse(input).reduce((acc, [x, range]) => {
     var a = (range-1)*2
     var b = (a-x%a)%a
-    constraints.push((n) => n % a != b)
+    return acc + (b == 0 ? x*range : 0)
+  }, 0)
+}
+
+const part2 = (input) => {
+  const constraints = parse(input).map(([x, range]) => {
+    var a = (range-1)*2
+    var b = (a-x%a)%a
+    return (n) => n % a != b
   })
 
   for (var i = 0; true; i++) {
