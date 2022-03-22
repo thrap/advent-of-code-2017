@@ -23,8 +23,19 @@ const part1 = (input) => {
 
 const part2 = (input) => {
   const graph = parse(input)
+  const remaining = new Set(Object.keys(graph))
 
-  return
+  const dfs = node => {
+    if (!remaining.has(node))
+      return
+    remaining.delete(node)
+    graph[node].forEach(c => dfs(c))
+  }
+  for (var count = 0; remaining.size != 0; count++) {
+    dfs(remaining.values().next().value)
+  }
+
+  return count
 }
 
 run({
