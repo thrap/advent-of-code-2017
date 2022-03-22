@@ -20,22 +20,31 @@ const part1 = (rawInput) => {
 }
 
 const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
+  var [a, b] = parseInput(rawInput)
 
-  return
+  var count = 0
+  var pow = 1 << 16
+  for(var i = 0; i < 5000000; i++) {
+    do {
+      a = (a*16807) % 2147483647
+    } while(a % 4 != 0)
+    do {
+      b = (b*48271) % 2147483647
+    } while (b % 8 != 0)
+
+    if (a % pow == b % pow) {
+      count++
+    }
+  }
+
+  return count
 }
 
-const part2Input = `Generator A starts with 65
-Generator B starts with 8921`
 run({
   part1: {
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
