@@ -1,79 +1,41 @@
 import run from "aocrunner"
 
-const re = /(.*)/
-const parseLine = l => l.match(re).slice(1).map(x => +x ? +x : x)
-const parseInput = rawInput => rawInput.split('\n')//.map(parseLine)
+const dirs = [[1,0],[0,1],[-1,0],[0,-1]]
 
-const dirs = [[0,1],[-1,0],[0,-1],[1,0]]
-const part1 = (rawInput) => {
-  const input = parseInput(rawInput)
+const traverse = input => {
+  const grid = input.split('\n')
   var x = 0
-  var y = input[x].indexOf('|')
-  var dirI = 3
-
-  console.log(dirs[dirI]);
+  var y = grid[x].indexOf('|')
+  var dir = 0
 
   var path = ''
-  for(var steps = 0; steps < 300000; steps++) {
-    const c = input[x][y]
+  for(var steps = 0; true; steps++) {
+    const c = grid[x][y]
     if ((c || ' ') == ' ') {
-      break
+      return [path, steps]
     }
     if (/[A-Z]/.test(c)) {
       path += c
     }
     if (c == '+') {
-      const a = dirs[(4+dirI-1)%4]
-      const b = dirs[(4+dirI+1)%4]
-      const ac = input[x+a[0]]?.[y+a[1]] || ' '
-      const bc = input[x+b[0]]?.[y+b[1]] || ' '
+      const [dx, dy] = dirs[(dir+1)%4]
 
-      if (ac != ' ' && bc != ' ') {
-        console.log();
-        throw 1
-      }
-
-      if (ac != ' ') {
-        dirI = (4+dirI-1)%4
-      } else if (bc != ' ') {
-        dirI = (4+dirI+1)%4
+      if ((grid[x+dx]?.[y+dy] || ' ') != ' ') {
+        dir = (dir+1)%4
       } else {
-        console.log("å fuck ingen");
-        throw 1
+        dir = (4+dir-1)%4
       }
     }
-    const [dx, dy] = dirs[dirI]
-    x += dx
-    y += dy
+    x += dirs[dir][0]
+    y += dirs[dir][1]
   }
-
-  return path
 }
 
-const part2 = (rawInput) => {
-
-}
-
-const part1Input = "     |          \n"+
-                   "     |  +--+    \n"+
-                   "     A  |  C    \n"+
-                   " F---|----E|--+ \n"+
-                   "     |  |  |  D \n"+
-                   "     +B-+  +--+ "
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
-    solution: part1,
+    solution: (input) => traverse(input)[0],
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
-    solution: part2,
+    solution: (input) => traverse(input)[1],
   },
-  trimTestInputs: false,
-  onlyTests: false,
 })
