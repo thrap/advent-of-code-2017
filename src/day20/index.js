@@ -35,29 +35,30 @@ const part1 = (rawInput) => {
 }
 
 const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
+  var input = parseInput(rawInput)
 
-  return
+  for(var steps = 0; steps < 200; steps++) {
+    const pos = {}
+    input.forEach(([x, y, z], i) => {
+      pos[[x,y,z]] = pos[[x,y,z]] || new Set()
+      pos[[x,y,z]].add(i)
+    });
+    const remove = new Set()
+    Object.values(pos).forEach(arr => {
+      if (arr.size != 1) {
+        arr.forEach(x => remove.add(x))
+      }
+    })
+    input = step(input.filter((_, x) => !remove.has(x)))
+  }
+  return input.length
 }
 
-const part1Input = `p=<3,0,0>, v=<2,0,0>, a=<-1,0,0>
-p=<4,0,0>, v=<0,0,0>, a=<-2,0,0>`
-const part2Input = `p=<-6,0,0>, v=<3,0,0>, a=<0,0,0>
-p=<-4,0,0>, v=<2,0,0>, a=<0,0,0>
-p=<-2,0,0>, v=<1,0,0>, a=<0,0,0>
-p=<3,0,0>, v=<-1,0,0>, a=<0,0,0>`
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
