@@ -174,9 +174,9 @@ Both parts: 1756.984302ms
 
 ```
 Day 16
-Time part 1: 8.418ms
-Time part 2: 319.605ms
-Both parts: 328.022309ms
+Time part 1: 13.197ms
+Time part 2: 114.672ms
+Both parts: 127.86919300000001ms
 ```
 
 ```

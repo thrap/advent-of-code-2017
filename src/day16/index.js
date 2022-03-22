@@ -7,10 +7,11 @@ const swap = (arr, a, b) => {
   arr[a] = arr[b]
   arr[b] = temp
 }
+
 const dance = (input, str) => {
   input.forEach(([s, a, b]) => {
     if (s == 's') {
-      str = str.slice(16 - a).concat(str.slice(0, 16-a))
+      str.push(...str.splice(0, 16-a))
     } else if (s == 'x') {
       swap(str, a, b)
     } else if (s == 'p') {
