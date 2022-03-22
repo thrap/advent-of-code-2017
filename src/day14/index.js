@@ -18,22 +18,34 @@ const part1 = (key) => {
 }
 
 const part2 = (key) => {
+  const grid = parseGrid(key)
+  const dirs = [[0, 1],[-1,0],[0,-1],[1,0]]
+  const visited = {}
+  const visit = (i, j) => {
+    if (visited[[i,j]] || grid[i]?.[j] != '1') {
+      return
+    }
+    visited[[i,j]] = true
+    dirs.forEach(([di, dj]) => visit(i+di, j+dj))
+  }
+
+  var regions = 0
+  for (var i = 0; i < 128; i++) {
+    for (var j = 0; j < 128; j++) {
+      if (grid[i][j] == '1' && !visited[[i,j]]) {
+        regions++
+        visit(i, j)
+      }
+    }
+  }
+  return regions
 }
 
-const part1Input = `flqrgnkx`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
