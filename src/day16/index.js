@@ -1,57 +1,60 @@
 import run from "aocrunner"
 
-const parseInput = rawInput => rawInput.split(',')
+const parseInput = rawInput => rawInput.split(',').map(([s, ...t]) => [s, ...t.join('').split('/')])
 
 const swap = (arr, a, b) => {
   const temp = arr[a]
   arr[a] = arr[b]
   arr[b] = temp
 }
+const dance = (input, str) => {
+  input.forEach(([s, a, b]) => {
+    if (s == 's') {
+      str = str.slice(16 - a).concat(str.slice(0, 16-a))
+    } else if (s == 'x') {
+      swap(str, a, b)
+    } else if (s == 'p') {
+      swap(str, str.indexOf(a), str.indexOf(b))
+    }
+  })
+  return str
+}
 
 const part1 = (rawInput) => {
   const input = parseInput(rawInput)
   var str = "abcdefghijklmnop".split('')
-  input.forEach(s => {
-    if (s[0] == 's') {
-      const x = +s.slice(1)
 
-      str = str.slice(str.length - x).concat(str.slice(0, str.length-x))
-    } else if (s[0] == 'x') {
-      const [a, b] = s.slice(1).split('/')
-
-      swap(str, a, b)
-    } else if (s[0] == 'p') {
-      const [a, b] = s.slice(1).split('/')
-
-      swap(str, str.indexOf(a), str.indexOf(b))
-    } else {
-      throw 1
-    }
-  });
-
-  return str.join('')
+  return dance(input, str).join('')
 }
 
 const part2 = (rawInput) => {
   const input = parseInput(rawInput)
 
-  return
+  const cycle = (str) => {
+    const start = str.join('')
+    for(var i = 1; true; i++) {
+      str = dance(input, str)
+      var s = str.join('')
+      if (s == start) {
+        return i
+      }
+    }
+  }
+
+  var str = "abcdefghijklmnop".split('')
+
+  const limit = 1000000000 % cycle([...str])
+  for (var i = 0; i < limit; i++) {
+    str = dance(input, str)
+  }
+  return str.join('')
 }
 
-const part1Input = `s1,x3/4,pe/b`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: '' },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
