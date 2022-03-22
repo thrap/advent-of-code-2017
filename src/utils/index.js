@@ -1,24 +1,34 @@
-/**
- * Root for your util libraries.
- *
- * You can import them in the src/template/index.js,
- * or in the specific file.
- *
- * Note that this repo uses ES Modules, so you have to explicitly specify
- * .js extension (yes, .js not .ts - even for TypeScript files)
- * for imports that are not imported from node_modules.
- *
- * For example:
- *
- *   correct:
- *
- *     import _ fro 'lodash
- *     import myLib from '../utils/myLib.js'
- *     import { myUtil } from '../utils/index.js'
- *
- *   incorrect:
- *
- *     import _ fro 'lodash
- *     import myLib from '../utils/myLib'
- *     import { myUtil } from '../utils'
- */
+ const swap = (arr, a, b) => {
+  const temp = arr[a]
+  arr[a] = arr[b]
+  arr[b] = temp
+}
+
+ export const knot = (rawInput) => {
+  const input = rawInput.split('').map(x => x.charCodeAt(0)).concat([17, 31, 73, 47, 23])
+
+  var arr = Array(256).fill(0).map((_, i) => i)
+  var skipSize = 0
+  var current = 0
+  for (var i = 0; i < 64; i++) {
+    input.forEach(length => {
+      for (var i = 0; i < length/2; i++) {
+        swap(arr, (current + i) % arr.length, (current + length - 1 - i) % arr.length)
+      }
+
+      current += length + skipSize
+      skipSize++
+    })
+  }
+
+  var res = ""
+  for(var i = 0; i < arr.length; i+=16) {
+    var result = arr[i]
+    for (var j = 1; j < 16; j++) {
+      result ^= arr[i+j]
+    }
+    res += (result < 16 ? '0' : '') + result.toString(16)
+  }
+
+  return res
+}
