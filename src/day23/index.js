@@ -24,7 +24,49 @@ const part1 = (rawInput) => {
   return count
 }
 
-const part2 = () => {
+const part2 = (rawInput) => {
+  const program = parseInput(rawInput)
+
+  const par = {
+    set: (x, y) => `${x} = ${y};`,
+    sub: (x, y) => `${x} = ${x} - ${y};`,
+    mul: (x, y) => `${x} = ${x} * ${y};`,
+  }
+
+  const parse = (indent, index, max) => {
+    for (var i = index; i < max; i++) {
+      var [s, x, y] = program[i]
+
+      for (var j = i + 1; j < max; j++) {
+        if (program[j][0] == 'jnz' && program[j][2] == i-j) {
+          console.log(indent + 'do {')
+          indent+= '  '
+        }
+      }
+
+      if (s == 'jnz' && y > 0) {
+        var steps = +y
+        console.log(indent + `if (${x} == 0) {`)
+        if (steps + index >= program.length) {
+          console.log(indent + "  return h");
+        } else {
+          parse(indent + "  ", i+1, i+1+steps-1)
+          i+=steps-1
+        }
+        console.log(indent + "}");
+      } else if ((s == 'jnz' && y < 0)) {
+        indent = indent.substring(0, indent.length-2)
+        console.log(indent + `} while (${x} != 0)\n`);
+      } else {
+        console.log(indent + par[s](x, y));
+      }
+    }
+    return
+  }
+
+  console.log("var a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;");
+  parse('', 0, program.length)
+
   const isPrime = n => {
     for (var i = 2; i <= Math.sqrt(n); i++) {
       if (n % i == 0)
