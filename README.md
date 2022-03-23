@@ -35,7 +35,7 @@
 [![Day](https://badgen.net/badge/22/%E2%98%85%E2%98%85/green)](src/day22)
 [![Day](https://badgen.net/badge/23/%E2%98%85%E2%98%85/green)](src/day23)
 [![Day](https://badgen.net/badge/24/%E2%98%85%E2%98%85/green)](src/day24)
-![Day](https://badgen.net/badge/25/%E2%98%86%E2%98%86/gray)
+[![Day](https://badgen.net/badge/25/%E2%98%85%E2%98%85/green)](src/day25)
 
 <!--/SOLUTIONS-->
 
@@ -230,21 +230,21 @@ Both parts: 12.611977ms
 
 ```
 Day 24
-Time part 1: 1158.891ms
-Time part 2: 1112.642ms
-Both parts: 2271.532282ms
+Time part 1: 1130.567ms
+Time part 2: 1045.862ms
+Both parts: 2176.428488ms
 ```
 
 ```
 Day 25
-Time part 1: -
+Time part 1: 568.577ms
 Time part 2: -
-Both parts: -
+Both parts: 568.577276ms
 ```
 
 ```
-Total stars: 48/50
-Total time: 15900.591ms
+Total stars: 50/50
+Total time: 16374.064ms
 ```
 
 <!--/RESULTS-->
