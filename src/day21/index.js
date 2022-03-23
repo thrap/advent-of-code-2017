@@ -18,19 +18,12 @@ const mirror = matrix => {
   return matrix.map(row => [...row].reverse())
 }
 
-const partition = (grid) => {
-  var n = grid.length % 2 == 0 ? 2 : 3
+const partition = (grid, n) => {
   const parts = []
   for (var di = 0; di < grid.length; di += n) {
     const row = []
     for (var dj = 0; dj < grid.length; dj+= n) {
-      const part = Array(n).fill(0).map(_ => Array(n))
-      for (var i = 0; i < n; i ++) {
-        for (var j = 0; j < n; j++) {
-          part[i][j] = grid[di+i][dj+j]
-        }
-      }
-      row.push(part)
+      row.push([...Array(n)].map((_, i) => [...Array(n)].map((_, j) => grid[di+i][dj+j])))
     }
     parts.push(row)
   }
@@ -41,7 +34,7 @@ const toArr = str => str.split('\n').map(l => l.split(''))
 const toStr = arr => arr.map(l => l.join('')).join('\n')
 
 const step = (grid, rules) => {
-  const parts = partition(grid).map(row => row.map(part => {
+  const parts = partition(grid, grid.length % 2 == 0 ? 2 : 3).map(row => row.map(part => {
     for (var i = 0; i < 4; i++) {
       const found = rules[toStr(part)] || rules[toStr(mirror(part))]
       if (found) {
@@ -53,11 +46,6 @@ const step = (grid, rules) => {
 
   var newArr = []
 
-  /*var count = {}
-  parts.flat().map(toStr).forEach(x => {
-    count[x] = (count[x] || 0) + 1
-  })
-  console.log(count);*/
   for (var i = 0; i < parts.length; i++) {
     for (var j = 0; j < parts[i][0].length; j++) {
       newArr.push(parts[i].map(m => m[j]).flat())
@@ -67,17 +55,35 @@ const step = (grid, rules) => {
   return newArr
 }
 
+const memo = {}
+const divide = (grid, rules, n) => {
+  if (n == 0)
+    return grid.map(l => l.join('')).join('').replace(/\./g,'').length
+  const str = n + toStr(grid)
+  if (memo[str]) {
+    return memo[str]
+  }
+  var sum = 0
+  if (grid.length > 12 && grid.length % 12 == 0) {
+    const parts = partition(grid, 12)
+    parts.flat().forEach(x => {
+      sum += divide(x, rules, n)
+    })
+  } else {
+    sum = divide(step(grid, rules), rules, n-1)
+  }
+
+  memo[str] = sum
+  return memo[str]
+}
+
 const solve = (input, n) => {
-  const rules = input.split('\n').map(l => l.replace(/\//g, '\n').split(' => '))
-                     .reduce((acc, [x, y]) => ({...acc, [x]: y}), {})
+  const split = input.split('\n').map(l => l.replace(/\//g, '\n').split(' => '))
+  const rules = split.reduce((acc, [x, y]) => ({...acc, [x]: y}), {})
 
   var grid = toArr('.#.\n..#\n###')
 
-  for (var steps = 0; steps < n; steps++) {
-    grid = step(grid, rules)
-  }
-
-  return grid.map(l => l.join('')).join('').replace(/\./g,'').length
+  return divide(grid, rules, n)
 }
 
 run({

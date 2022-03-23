@@ -209,9 +209,9 @@ Both parts: 348.309268ms
 
 ```
 Day 21
-Time part 1: 6.155ms
-Time part 2: 6890.937ms
-Both parts: 6897.092025ms
+Time part 1: 1.701ms
+Time part 2: 29.754ms
+Both parts: 31.454576ms
 ```
 
 ```
@@ -244,7 +244,7 @@ Both parts: -
 
 ```
 Total stars: 42/50
-Total time: 10176.64ms
+Total time: 3324.035ms
 ```
 
 <!--/RESULTS-->
