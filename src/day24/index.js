@@ -26,30 +26,37 @@ const part1 = (rawInput) => {
 const part2 = (rawInput) => {
   const input = parseInput(rawInput)
 
-  return
+  var max = 0
+  var maxLength = 0
+  const dfs = (pin, arr, acc, length) => {
+    if (length > maxLength) {
+      maxLength = length
+      max = acc
+    }
+    if (length >= maxLength) {
+      max = Math.max(acc, max)
+    }
+
+    arr.forEach(([a, b], i) => {
+      if (a == pin) {
+        dfs(b, arr.filter((_, j) => j != i), acc + a + b, length+1)
+      }
+      if (b == pin) {
+        dfs(a, arr.filter((_, j) => j != i), acc + a + b, length+1)
+      }
+    })
+  }
+
+  dfs(0, input, 0, 0)
+
+  return max
 }
 
-const part1Input = `0/2
-2/2
-2/3
-3/4
-3/5
-0/1
-10/1
-9/10`
-const part2Input = part1Input
 run({
   part1: {
-    tests: [
-      { input: part1Input, expected: 31 },
-    ],
     solution: part1,
   },
   part2: {
-    tests: [
-      { input: part2Input, expected: '' },
-    ],
     solution: part2,
   },
-  onlyTests: false,
 })
