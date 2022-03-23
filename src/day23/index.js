@@ -24,10 +24,27 @@ const part1 = (rawInput) => {
   return count
 }
 
-const part2 = (rawInput) => {
-  const input = parseInput(rawInput)
+const part2 = () => {
+  const isPrime = n => {
+    for (var i = 2; i <= Math.sqrt(n); i++) {
+      if (n % i == 0)
+        return false
+    }
+    return true
+  }
 
-  return
+  var b = 81*100 + 100000
+  var c = b + 17000;
+  var h = 0
+  while (true) {
+    if (!isPrime(b)) {
+      h = h + 1
+    }
+    if (b == c) {
+      return h
+    }
+    b = b + 17
+  }
 }
 
 run({
