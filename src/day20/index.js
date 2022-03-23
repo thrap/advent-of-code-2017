@@ -34,8 +34,61 @@ const part1 = (rawInput) => {
   return minParticle
 }
 
+const canCrash = (arr, b) => {
+
+  const ts = []
+  var t = 0
+  for (var i = 0; i < 3; i++) {
+    const a1 = arr[6+i]
+    const v1 = arr[3+i]
+    const p1 = arr[0+i]
+
+    const a2 = b[6+i]
+    const v2 = b[3+i]
+    const p2 = b[0+i]
+
+    var p = (p1 - p2)
+    var v = (v1-v2)
+    var a = (a1-a2)
+    if (a < 0) {
+      a*=-1
+      p*=-1
+      v*=-1
+    }
+
+    if (a == 0) {
+      t = -p/v
+      // blir dette riktig?
+      ts.push([t, -t])
+    } else {
+      const sols = [(-a - 2 * v + Math.sqrt(-8*a*p + Math.pow(a + 2 *v, 2)))/(2*a), -(a + 2 * v + Math.sqrt(-8*a*p + Math.pow(a + 2 *v, 2)))/(2*a)]
+      ts.push(sols)
+      t = (-a - 2 * v + Math.sqrt(-8*a*p + Math.pow(a + 2 *v, 2)))/(2*a)
+    }
+  }
+  const count = {}
+  for (var i = 0; i < 3; i++) {
+    ts[i].forEach(x => {
+      count[x] = (count[x] || 0) + 1
+    })
+  }
+  var T = Object.keys(count).find(x => count[x] >= 3)
+  return T
+}
+
 const part2 = (rawInput) => {
   var input = parseInput(rawInput)
+
+  var count = 0
+  input.forEach(a => {
+    input.forEach(b => {
+      if (a != b && !isNaN(canCrash(a, b))) {
+        count ++
+      }
+    })
+  })
+  console.log(count);
+
 
   for(var steps = 0; steps < 200; steps++) {
     const pos = {}
